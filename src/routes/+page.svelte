@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { load, upload, create } from './db'
 	import type { Task } from './db'
 	import Select from './Select.svelte'
@@ -7,8 +8,17 @@
 
 	// states
 	let promise = load()
+	let currentTime = currentTimeString()
 
 	// lifecycle
+	onMount(() => {
+		const timer = setInterval(() => {
+			currentTime = currentTimeString()
+		}, 60 * 1000)
+		return () => {
+			clearInterval(timer)
+		}
+	})
 
 	// functions
 	async function handler(target: EventTarget | null, task: Task, field: keyof Task) {
@@ -20,17 +30,30 @@
 
 	async function addTask(target: HTMLInputElement) {
 		await create({ name: target.value, section: 'v8oxto1ra8ghn3w' })
+		target.value = ''
+		target.blur()
 		promise = load()
+	}
+
+	function currentTimeString() {
+		const now = new Date()
+		const hh = now.getHours()
+		const mm = now.getMinutes()
+		return `${hh}:${mm}`
 	}
 </script>
 
 <div class="container m-auto max-w-5xl">
-	<input
-		class="my-2"
-		type="text"
-		placeholder="New Task"
-		on:change={(e) => addTask(e.currentTarget)}
-	/>
+	<div class="my-4">{currentTime}</div>
+	<div class="my-4">
+		<i class="fa-solid fa-circle-plus fa-xl mr-1 text-sky-400" />
+		<input
+			class="my-2"
+			type="text"
+			placeholder="New Task"
+			on:change={(e) => addTask(e.currentTarget)}
+		/>
+	</div>
 	{#await promise then { tasks, projects, modes, sections }}
 		<table class="w-full">
 			<thead>
