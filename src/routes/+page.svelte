@@ -89,7 +89,7 @@
 			<div class="border-b text-center">終了予定</div>
 			<p class="text-center text-2xl">{currentTime}</p>
 		</div>
-		<div class="bourder flex h-24 basis-36 flex-col flex-wrap rounded">
+		<div class="flex h-24 basis-52 flex-col flex-wrap rounded border p-2">
 			{#each Object.keys(timeSammary) as section (section)}
 				{#if section.length == 1}
 					<p>{section}: {min2hhmm(timeSammary[section])}</p>
