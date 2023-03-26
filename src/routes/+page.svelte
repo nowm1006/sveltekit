@@ -18,11 +18,14 @@
 		timeSammary = tasks.reduce(
 			(p, c) => {
 				p.total += c.estimate
+				const [section] = sections.filter((section) => section.id == c.section)
+				p[section.name as keyof typeof p] += c.estimate
 				return p
 			},
-			{ total: 0 }
+			{ total: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, U: 0 }
 		)
 		currentTime = currentTimeString(timeSammary.total)
+		console.log(timeSammary)
 	}
 
 	// lifecycle
@@ -65,16 +68,33 @@
 		const mm = now.getMinutes()
 		const totalMin = hh * 60 + mm + taskMin
 		const hhTotal = Math.floor(totalMin / 60)
-		const mmTotal = totalMin % 60
+		const mmTotal = (totalMin % 60).toString().padStart(2, '0')
 		return `${hhTotal}:${mmTotal}`
 	}
+
+	const min2hhmm = (min: number): string => {
+		const hh = Math.floor(min / 60)
+		const mm = (min % 60).toString().padStart(2, '0')
+		return `${hh}:${mm}`
+	}
 </script>
+
+<svelte:head>
+	<title>TaskChuteClone</title>
+</svelte:head>
 
 <div class="container m-auto max-w-5xl">
 	<div class="flex gap-4 p-4">
 		<div class="basis-36 rounded border">
 			<div class="border-b text-center">終了予定</div>
 			<p class="text-center text-2xl">{currentTime}</p>
+		</div>
+		<div class="bourder flex h-24 basis-36 flex-col flex-wrap rounded">
+			{#each Object.keys(timeSammary) as section (section)}
+				{#if section.length == 1}
+					<p>{section}: {min2hhmm(timeSammary[section])}</p>
+				{/if}
+			{/each}
 		</div>
 	</div>
 	<div class="my-4">
