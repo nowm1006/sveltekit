@@ -129,7 +129,7 @@
 					<tr class="border-b" draggable={true} style:color={selectedMode?.color || 'black'}>
 						<td
 							><input
-								class="w-full p-1"
+								class="w-full py-1 px-4"
 								type="text"
 								value={task.name}
 								on:change={(e) => handler(e.currentTarget, task, 'name')}
