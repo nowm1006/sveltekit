@@ -51,10 +51,14 @@ export const load: () => Promise<{
 	}
 }
 
-export const upload = async (id: string, key: keyof Task, value: any) => {
-	const res = await pb.collection('tc_tasks').update(id, { [key]: value })
+export const upload = async (id: string, task: Task) => {
+	return await pb.collection('tc_tasks').update<Task>(id, task)
 }
 
 export const create = async (task: Partial<Task>) => {
-	const res = await pb.collection('tc_tasks').create(task)
+	return await pb.collection('tc_tasks').create<Task>(task)
+}
+
+export const del = async (id: string) => {
+	return await pb.collection('tc_tasks').delete(id)
 }

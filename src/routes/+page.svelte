@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { load, upload, create } from './db'
+	import { load, upload, create, del } from './db'
 	import type { Task, Project, Mode, Section } from './db'
 	import Select from './Select.svelte'
 
@@ -45,21 +45,26 @@
 	})
 
 	// functions
-	async function handler(target: EventTarget | null, task: Task, field: keyof Task) {
+	async function handler(target: EventTarget | null, task: Task) {
 		if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLSelectElement)) return
 
-		await upload(task.id, field, target.value)
+		const res = await upload(task.id, task)
 		target.blur()
-		const data = await load()
-		tasks = data.tasks
+		tasks = tasks
 	}
 
 	async function addTask(target: HTMLInputElement) {
-		await create({ name: target.value, section: 'v8oxto1ra8ghn3w' })
+		const res = await create({ name: target.value, section: 'v8oxto1ra8ghn3w' })
 		target.value = ''
 		target.blur()
-		const data = await load()
-		tasks = data.tasks
+		tasks = [...tasks, res]
+	}
+
+	async function delTask(e: Event, task: Task) {
+		const res = await del(task.id)
+		if (res) {
+			tasks = tasks.filter((t) => t.id != task.id)
+		}
 	}
 
 	function currentTimeString(taskMin: number) {
@@ -115,13 +120,14 @@
 				<th>Section</th>
 				<th>Estimate</th>
 				<th>Actual</th>
+				<th>...</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#each sections as section (section.id)}
 				{@const sectionTasks = tasks.filter((task) => task.section == section.id)}
 				<tr class="mt-4 bg-gray-400 text-white"
-					><td class="px-2" colspan="6">{section.name} {section.start}:00~ 「{section.comment}」</td
+					><td class="px-2" colspan="7">{section.name} {section.start}:00~ 「{section.comment}」</td
 					></tr
 				>
 				{#each sectionTasks as task (task.id)}
@@ -131,47 +137,48 @@
 							><input
 								class="w-full py-1 px-4"
 								type="text"
-								value={task.name}
-								on:change={(e) => handler(e.currentTarget, task, 'name')}
+								bind:value={task.name}
+								on:change={(e) => handler(e.currentTarget, task)}
 							/></td
 						>
 						<td>
 							<Select
-								value={task.project}
+								bind:value={task.project}
 								options={projects}
-								on:change={(e) => handler(e.currentTarget, task, 'project')}
+								on:change={(e) => handler(e.currentTarget, task)}
 							/>
 						</td>
 						<td>
 							<Select
-								value={task.mode}
+								bind:value={task.mode}
 								options={modes}
-								on:change={(e) => handler(e.currentTarget, task, 'mode')}
+								on:change={(e) => handler(e.currentTarget, task)}
 							/>
 						</td>
 						<td>
 							<Select
-								value={task.section}
+								bind:value={task.section}
 								options={sections}
-								on:change={(e) => handler(e.currentTarget, task, 'section')}
+								on:change={(e) => handler(e.currentTarget, task)}
 							/>
 						</td>
 						<td
 							><input
 								class="w-16 p-1"
 								type="text"
-								value={task.estimate}
-								on:change={(e) => handler(e.currentTarget, task, 'estimate')}
+								bind:value={task.estimate}
+								on:change={(e) => handler(e.currentTarget, task)}
 							/></td
 						>
 						<td
 							><input
 								class="w-16 p-1"
 								type="text"
-								value={task.actual}
-								on:change={(e) => handler(e.currentTarget, task, 'actual')}
+								bind:value={task.actual}
+								on:change={(e) => handler(e.currentTarget, task)}
 							/></td
 						>
+						<td><button on:click={(e) => delTask(e, task)}>x</button></td>
 					</tr>
 				{/each}
 			{/each}
