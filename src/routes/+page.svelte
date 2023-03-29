@@ -14,6 +14,7 @@
 	let currentTime = currentTimeString(0)
 	let timeSammary: any
 	let showDone = false
+	let date = today()
 
 	$: {
 		timeSammary = tasks.reduce(
@@ -26,7 +27,6 @@
 			{ total: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, U: 0 }
 		)
 		currentTime = currentTimeString(timeSammary.total)
-		console.log(timeSammary)
 	}
 
 	// lifecycle
@@ -83,6 +83,14 @@
 		const mm = (min % 60).toString().padStart(2, '0')
 		return `${hh}:${mm}`
 	}
+
+	function today() {
+		const today = new Date()
+		const yyyy = today.getFullYear().toString()
+		const mm = (today.getMonth() + 1).toString().padStart(2, '0')
+		const dd = today.getDate().toString().padStart(2, '0')
+		return `${yyyy}-${mm}-${dd}`
+	}
 </script>
 
 <svelte:head>
@@ -105,6 +113,14 @@
 		<div>
 			<input type="checkbox" id="show-done" bind:checked={showDone} />
 			<label for="show-doen">Show Done</label>
+		</div>
+		<div class="flex flex-col">
+			<input type="date" value={date} />
+			<div>
+				<button class="border">昨日</button>
+				<button class="border">今日</button>
+				<button class="border">明日</button>
+			</div>
 		</div>
 	</div>
 	<div class="my-4">
