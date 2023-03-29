@@ -13,6 +13,7 @@
 	let sections: Section[] = []
 	let currentTime = currentTimeString(0)
 	let timeSammary: any
+	let showDone = false
 
 	$: {
 		timeSammary = tasks.reduce(
@@ -101,6 +102,10 @@
 				{/if}
 			{/each}
 		</div>
+		<div>
+			<input type="checkbox" id="show-done" bind:checked={showDone} />
+			<label for="show-doen">Show Done</label>
+		</div>
 	</div>
 	<div class="my-4">
 		<i class="fa-solid fa-circle-plus fa-xl mr-1 text-sky-400" />
@@ -114,6 +119,7 @@
 	<table class="w-full">
 		<thead>
 			<tr class="border-b bg-slate-400 text-left text-white shadow-lg">
+				<th>.</th>
 				<th>Task</th>
 				<th>Project</th>
 				<th>Mode</th>
@@ -127,12 +133,24 @@
 			{#each sections as section (section.id)}
 				{@const sectionTasks = tasks.filter((task) => task.section == section.id)}
 				<tr class="mt-4 bg-gray-400 text-white"
-					><td class="px-2" colspan="7">{section.name} {section.start}:00~ 「{section.comment}」</td
+					><td class="px-2" colspan="8">{section.name} {section.start}:00~ 「{section.comment}」</td
 					></tr
 				>
 				{#each sectionTasks as task (task.id)}
 					{@const [selectedMode] = modes.filter((mode) => mode.id == task.mode)}
-					<tr class="border-b" draggable={true} style:color={selectedMode?.color || 'black'}>
+					<tr
+						class="border-b"
+						draggable={true}
+						style:color={selectedMode?.color || 'black'}
+						class:done={task.done && !showDone}
+					>
+						<td
+							><input
+								type="checkbox"
+								bind:checked={task.done}
+								on:change={(e) => handler(e.currentTarget, task)}
+							/></td
+						>
 						<td
 							><input
 								class="w-full py-1 px-4"
@@ -185,3 +203,9 @@
 		</tbody>
 	</table>
 </div>
+
+<style>
+	.done {
+		@apply hidden;
+	}
+</style>

@@ -28,6 +28,7 @@ export interface Task {
 	estimate: number
 	actual: number
 	section: string
+	done: boolean
 }
 
 export const load: () => Promise<{
