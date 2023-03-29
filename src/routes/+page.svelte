@@ -136,7 +136,7 @@
 	<table class="w-full">
 		<thead>
 			<tr class="border-b bg-slate-400 text-left text-white shadow-lg">
-				<th>.</th>
+				<th><input type="checkbox" /></th>
 				<th>Task</th>
 				<th>Project</th>
 				<th>Mode</th>
