@@ -19,6 +19,7 @@
 	$: {
 		timeSammary = tasks.reduce(
 			(p, c) => {
+				if (c.done) return p
 				p.total += c.estimate
 				const [section] = sections.filter((section) => section.id == c.section)
 				p[section.name as keyof typeof p] += c.estimate
