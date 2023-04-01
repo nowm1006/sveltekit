@@ -14,7 +14,7 @@
 	let currentTime = currentTimeString(0)
 	let timeSammary: any
 	let showDone = false
-	let date = today()
+	let date = new Date()
 
 	$: {
 		timeSammary = tasks.reduce(
@@ -85,11 +85,10 @@
 		return `${hh}:${mm}`
 	}
 
-	function today() {
-		const today = new Date()
-		const yyyy = today.getFullYear().toString()
-		const mm = (today.getMonth() + 1).toString().padStart(2, '0')
-		const dd = today.getDate().toString().padStart(2, '0')
+	function dateISOString(date: Date) {
+		const yyyy = date.getFullYear().toString()
+		const mm = (date.getMonth() + 1).toString().padStart(2, '0')
+		const dd = date.getDate().toString().padStart(2, '0')
 		return `${yyyy}-${mm}-${dd}`
 	}
 </script>
@@ -116,11 +115,28 @@
 			<label for="show-doen">Show Done</label>
 		</div>
 		<div class="flex flex-col">
-			<input type="date" value={date} />
+			<input type="date" value={dateISOString(date)} />
 			<div>
-				<button class="border">昨日</button>
-				<button class="border">今日</button>
-				<button class="border">明日</button>
+				<button
+					class="border"
+					on:click={() => {
+						date.setDate(date.getDate() - 1)
+						date = date
+					}}>前日</button
+				>
+				<button
+					class="border"
+					on:click={() => {
+						date = new Date()
+					}}>今日</button
+				>
+				<button
+					class="border"
+					on:click={() => {
+						date.setDate(date.getDate() + 1)
+						date = date
+					}}>翌日</button
+				>
 			</div>
 		</div>
 	</div>
