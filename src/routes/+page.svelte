@@ -115,23 +115,23 @@
 			<label for="show-doen">Show Done</label>
 		</div>
 		<div class="flex flex-col">
-			<input type="date" value={dateISOString(date)} />
-			<div>
+			<input class="h-12 w-52 border p-2 text-center" type="date" value={dateISOString(date)} />
+			<div class="flex">
 				<button
-					class="border"
+					class="h-12 flex-auto border"
 					on:click={() => {
 						date.setDate(date.getDate() - 1)
 						date = date
 					}}>前日</button
 				>
 				<button
-					class="border"
+					class="h-12 flex-auto border"
 					on:click={() => {
 						date = new Date()
 					}}>今日</button
 				>
 				<button
-					class="border"
+					class="h-12 flex-auto border"
 					on:click={() => {
 						date.setDate(date.getDate() + 1)
 						date = date
