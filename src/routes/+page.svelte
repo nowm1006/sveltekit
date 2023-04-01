@@ -111,9 +111,15 @@
 			{/each}
 		</div>
 		<div>
-			<input type="checkbox" id="show-done" bind:checked={showDone} />
-			<label for="show-doen">Show Done</label>
+			<label class="relative inline-flex cursor-pointer items-center">
+				<input type="checkbox" value="" class="peer sr-only" bind:checked={showDone} />
+				<div
+					class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full"
+				/>
+				<span class="ml-3">Show Done</span>
+			</label>
 		</div>
+
 		<div class="flex flex-col">
 			<input class="h-12 w-52 border p-2 text-center" type="date" value={dateISOString(date)} />
 			<div class="flex">
