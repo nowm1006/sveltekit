@@ -3,6 +3,7 @@
 	import { load, upload, create, del } from './db'
 	import type { Task, Project, Mode, Section } from './db'
 	import Select from './Select.svelte'
+	import ToggleSwitch from '$lib/ToggleSwitch.svelte'
 
 	// props
 
@@ -110,10 +111,8 @@
 				{/if}
 			{/each}
 		</div>
-		<div>
-			<input type="checkbox" id="show-done" bind:checked={showDone} />
-			<label for="show-doen">Show Done</label>
-		</div>
+		<ToggleSwitch bind:checked={showDone}>Show Done</ToggleSwitch>
+
 		<div class="flex flex-col">
 			<input class="h-12 w-52 border p-2 text-center" type="date" value={dateISOString(date)} />
 			<div class="flex">
