@@ -26,6 +26,11 @@
 	})
 
 	// functions
+	async function changeTask(task: Task) {
+		const res = await upload(task.id, task)
+		tasks = tasks
+	}
+
 	async function addTask(target: HTMLInputElement) {
 		const res = await create({ name: target.value, section: 'v8oxto1ra8ghn3w' })
 		target.value = ''
@@ -33,7 +38,7 @@
 		tasks = [...tasks, res]
 	}
 
-	async function delTask(e: Event, task: Task) {
+	async function delTask(task: Task) {
 		const res = await del(task.id)
 		if (res) {
 			tasks = tasks.filter((t) => t.id != task.id)
@@ -114,12 +119,14 @@
 				>
 				{#each sectionTasks as task (task.id)}
 					<TaskComponent
-						{task}
+						bind:task
 						{projects}
 						{modes}
 						{sections}
 						{showDone}
-						on:click={(e) => delTask(e, task)}
+						on:change={() => changeTask(task)}
+						on:blur={() => changeTask(task)}
+						on:click={() => delTask(task)}
 					/>
 				{/each}
 			{/each}
