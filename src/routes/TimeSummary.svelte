@@ -6,7 +6,7 @@
 	export let sections: Section[]
 	let timeSammary = { total: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, U: 0 }
 	let currentTime = currentTimeString(0)
-	const timeSammaryKeys = Object.keys(timeSammary) as keyof typeof timeSammary
+	const timeSammaryKeys = Object.keys(timeSammary) as unknown as keyof typeof timeSammary
 
 	$: {
 		timeSammary = tasks.reduce((p, c) => {
