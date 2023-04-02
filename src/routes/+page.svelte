@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte'
 	import { load, upload, create, del } from './db'
 	import type { Task, Project, Mode, Section } from './db'
-	import Select from './Select.svelte'
+	import TaskComponent from './Task.svelte'
 	import ToggleSwitch from '$lib/ToggleSwitch.svelte'
 
 	// props
@@ -48,14 +48,6 @@
 	})
 
 	// functions
-	async function handler(target: EventTarget | null, task: Task) {
-		if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLSelectElement)) return
-
-		const res = await upload(task.id, task)
-		target.blur()
-		tasks = tasks
-	}
-
 	async function addTask(target: HTMLInputElement) {
 		const res = await create({ name: target.value, section: 'v8oxto1ra8ghn3w' })
 		target.value = ''
@@ -169,75 +161,16 @@
 					></tr
 				>
 				{#each sectionTasks as task (task.id)}
-					{@const [selectedMode] = modes.filter((mode) => mode.id == task.mode)}
-					<tr
-						class="border-b"
-						draggable={true}
-						style:color={selectedMode?.color || 'black'}
-						class:done={task.done && !showDone}
-					>
-						<td
-							><input
-								type="checkbox"
-								bind:checked={task.done}
-								on:change={(e) => handler(e.currentTarget, task)}
-							/></td
-						>
-						<td
-							><input
-								class="w-full py-1 px-4"
-								type="text"
-								bind:value={task.name}
-								on:change={(e) => handler(e.currentTarget, task)}
-							/></td
-						>
-						<td>
-							<Select
-								bind:value={task.project}
-								options={projects}
-								on:change={(e) => handler(e.currentTarget, task)}
-							/>
-						</td>
-						<td>
-							<Select
-								bind:value={task.mode}
-								options={modes}
-								on:change={(e) => handler(e.currentTarget, task)}
-							/>
-						</td>
-						<td>
-							<Select
-								bind:value={task.section}
-								options={sections}
-								on:change={(e) => handler(e.currentTarget, task)}
-							/>
-						</td>
-						<td
-							><input
-								class="w-16 p-1"
-								type="text"
-								bind:value={task.estimate}
-								on:change={(e) => handler(e.currentTarget, task)}
-							/></td
-						>
-						<td
-							><input
-								class="w-16 p-1"
-								type="text"
-								bind:value={task.actual}
-								on:change={(e) => handler(e.currentTarget, task)}
-							/></td
-						>
-						<td><button on:click={(e) => delTask(e, task)}>x</button></td>
-					</tr>
+					<TaskComponent
+						{task}
+						{projects}
+						{modes}
+						{sections}
+						{showDone}
+						on:click={(e) => delTask(e, task)}
+					/>
 				{/each}
 			{/each}
 		</tbody>
 	</table>
 </div>
-
-<style>
-	.done {
-		@apply hidden;
-	}
-</style>
