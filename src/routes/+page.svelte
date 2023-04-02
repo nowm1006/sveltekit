@@ -91,7 +91,7 @@
 	<div class="my-4">
 		<i class="fa-solid fa-circle-plus fa-xl mr-1 text-sky-400" />
 		<input
-			class="my-2"
+			class="my-2 w-96 rounded border p-2"
 			type="text"
 			placeholder="New Task"
 			on:change={(e) => addTask(e.currentTarget)}
