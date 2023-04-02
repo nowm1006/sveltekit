@@ -19,6 +19,7 @@
 
 		const res = await upload(task.id, task)
 		e.currentTarget.blur()
+		task = task
 	}
 </script>
 

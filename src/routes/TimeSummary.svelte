@@ -4,18 +4,24 @@
 
 	export let tasks: Task[]
 	export let sections: Section[]
-	let timeSammary = { total: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, U: 0 }
+	let timeSammary: {
+		[K in Section['name']]: number
+	} & {
+		total: number
+	}
 	let currentTime = currentTimeString(0)
-	const timeSammaryKeys = Object.keys(timeSammary) as unknown as keyof typeof timeSammary
 
 	$: {
-		timeSammary = tasks.reduce((p, c) => {
-			if (c.done) return p
-			p.total += c.estimate
-			const [section] = sections.filter((section) => section.id == c.section)
-			p[section.name as keyof typeof p] += c.estimate
-			return p
-		}, timeSammary)
+		timeSammary = tasks.reduce(
+			(p, c) => {
+				if (c.done) return p
+				p.total += c.estimate
+				const [section] = sections.filter((section) => section.id == c.section)
+				p[section.name as keyof typeof p] += Number(c.estimate)
+				return p
+			},
+			{ total: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, U: 0 }
+		)
 		currentTime = currentTimeString(timeSammary.total)
 	}
 
@@ -54,9 +60,9 @@
 		</div>
 	</div>
 	<div class="flex h-24 basis-52 flex-col flex-wrap rounded border p-2">
-		{#each timeSammaryKeys as section (section)}
+		{#each Object.entries(timeSammary) as [section, time] (section)}
 			{#if section.length == 1}
-				<p>{section}: {min2hhmm(timeSammary[section])}</p>
+				<p>{section}: {min2hhmm(time)}</p>
 			{/if}
 		{/each}
 	</div>
