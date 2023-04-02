@@ -15,7 +15,7 @@ export interface Mode {
 
 export interface Section {
 	id: string
-	name: string
+	name: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'U'
 	start: number
 	comment: string
 }

@@ -2,8 +2,9 @@
 	import { onMount } from 'svelte'
 	import { load, upload, create, del } from './db'
 	import type { Task, Project, Mode, Section } from './db'
-	import TaskComponent from './Task.svelte'
+	import TaskComponent from './TaskComponent.svelte'
 	import ToggleSwitch from '$lib/ToggleSwitch.svelte'
+	import TimeSummary from './TimeSummary.svelte'
 
 	// props
 
@@ -12,24 +13,8 @@
 	let projects: Project[] = []
 	let modes: Mode[] = []
 	let sections: Section[] = []
-	let currentTime = currentTimeString(0)
-	let timeSammary: any
 	let showDone = false
 	let date = new Date()
-
-	$: {
-		timeSammary = tasks.reduce(
-			(p, c) => {
-				if (c.done) return p
-				p.total += c.estimate
-				const [section] = sections.filter((section) => section.id == c.section)
-				p[section.name as keyof typeof p] += c.estimate
-				return p
-			},
-			{ total: 0, A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, U: 0 }
-		)
-		currentTime = currentTimeString(timeSammary.total)
-	}
 
 	// lifecycle
 	onMount(async () => {
@@ -38,13 +23,6 @@
 		projects = data.projects
 		modes = data.modes
 		sections = data.sections
-
-		const timer = setInterval(() => {
-			currentTime = currentTimeString(timeSammary.total)
-		}, 60 * 1000)
-		return () => {
-			clearInterval(timer)
-		}
 	})
 
 	// functions
@@ -62,22 +40,6 @@
 		}
 	}
 
-	function currentTimeString(taskMin: number) {
-		const now = new Date()
-		const hh = now.getHours()
-		const mm = now.getMinutes()
-		const totalMin = hh * 60 + mm + taskMin
-		const hhTotal = Math.floor(totalMin / 60)
-		const mmTotal = (totalMin % 60).toString().padStart(2, '0')
-		return `${hhTotal}:${mmTotal}`
-	}
-
-	const min2hhmm = (min: number): string => {
-		const hh = Math.floor(min / 60)
-		const mm = (min % 60).toString().padStart(2, '0')
-		return `${hh}:${mm}`
-	}
-
 	function dateISOString(date: Date) {
 		const yyyy = date.getFullYear().toString()
 		const mm = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -92,17 +54,7 @@
 
 <div class="container m-auto max-w-5xl">
 	<div class="flex gap-4 p-4">
-		<div class="basis-36 rounded border">
-			<div class="border-b text-center">終了予定</div>
-			<p class="text-center text-2xl">{currentTime}</p>
-		</div>
-		<div class="flex h-24 basis-52 flex-col flex-wrap rounded border p-2">
-			{#each Object.keys(timeSammary) as section (section)}
-				{#if section.length == 1}
-					<p>{section}: {min2hhmm(timeSammary[section])}</p>
-				{/if}
-			{/each}
-		</div>
+		<TimeSummary {tasks} {sections} />
 		<ToggleSwitch bind:checked={showDone}>Show Done</ToggleSwitch>
 
 		<div class="flex flex-col">
